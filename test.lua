@@ -1,502 +1,312 @@
--- 🔥 FISH IT ULTRA SECRET HUNTER - BARBAR MODE 🔥
--- DEVELOPER BY WAKWIK RWORRRRR
--- VERSION: ULTRA BRUTAL SECRET EDITION
+-- ================= INSTANT FISHING SYSTEM =================
 
-print("Loading ULTRA SECRET HUNTER - BARBAR MODE...")
-
-if not game:IsLoaded() then
-    game.Loaded:Wait()
-end
-
--- SERVICES
-local Players = game:GetService("Players")
-local Workspace = game:GetService("Workspace")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local RunService = game:GetService("RunService")
-local TeleportService = game:GetService("TeleportService")
-
-local LocalPlayer = Players.LocalPlayer
-local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart")
-
--- RAYFIELD UI
-local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
-
-local Window = Rayfield:CreateWindow({
-    Name = "🔥 ULTRA SECRET HUNTER - BARBAR MODE",
-    LoadingTitle = "ULTRA SECRET HUNTER - BARBAR MODE",
-    LoadingSubtitle = "DEVELOPER BY WAKWIK - SECRET EDITION",
-    ConfigurationSaving = { Enabled = false },
-})
-
--- REMOTES
-local net = ReplicatedStorage:WaitForChild("Packages"):WaitForChild("_Index"):WaitForChild("sleitnick_net@0.2.0"):WaitForChild("net")
-local EquipTool = net:FindFirstChild("RE/EquipToolFromHotbar")
-local ChargeRod = net:FindFirstChild("RF/ChargeFishingRod")
-local StartMini = net:FindFirstChild("RF/RequestFishingMinigameStarted")
-local FinishFish = net:FindFirstChild("RE/FishingCompleted")
-local FishCaught = net:FindFirstChild("RE/FishCaught")
-local SellRemote = net:FindFirstChild("RF/SellAllItems")
-
--- CONFIG
-local Config = {
-    UltraSecretMode = false,
-    ForceSecretSpawn = false,
-    SecretTeleport = false,
-    AntiAntiCheat = false,
-    MaxSecretAttempts = 1000,
-    SecretLocations = {
-        "Sisyphus Statue",
-        "Sacred Temple", 
-        "Ancient Jungle",
-        "Enchant Room",
-        "Treasure Room",
-        "Volcano",
-        "Lost Isle"
-    }
+local InstantFishingActive = false
+local InstantFishingStats = {
+    TotalCatches = 0,
+    StartTime = 0,
+    PerfectRate = 100, -- 100% success rate
+    LastCatchTime = 0
 }
 
--- ULTRA SECRET DETECTION SYSTEM
-local SecretDetectionActive = false
-local SecretFound = false
-local TotalSecretsCaught = 0
-local SecretSessionStart = 0
-
--- FORCE SECRET SPAWN SYSTEM
-local function ForceSecretSpawn()
-    while Config.ForceSecretSpawn do
-        pcall(function()
-            -- METHOD 1: DIRECT SECRET SPAWN
-            if FishCaught then
-                -- Spawn SECRET fish langsung
-                local secretFish = {
-                    Name = "⚡ ULTRA SECRET FISH",
-                    Tier = 7,
-                    SellPrice = math.random(50000, 200000),
-                    Rarity = "SECRET",
-                    Weight = math.random(10, 50) + math.random()
-                }
-                FishCaught:FireServer(secretFish)
-                TotalSecretsCaught += 1
-                print("🔥 SECRET FORCE SPAWNED! Total: " .. TotalSecretsCaught)
-            end
-            
-            -- METHOD 2: MASS SECRET SPAWN
-            for i = 1, 5 do
-                local massSecret = {
-                    Name = "🚀 MASS SECRET " .. i,
-                    Tier = 7,
-                    SellPrice = math.random(100000, 500000),
-                    Rarity = "SECRET",
-                    Weight = math.random(20, 100) + math.random()
-                }
-                FishCaught:FireServer(massSecret)
-                TotalSecretsCaught += 1
-            end
-            
-            -- METHOD 3: LEGENDARY + MYTHIC SPAM
-            for i = 1, 10 do
-                local rareFish = {
-                    Name = "⭐ LEGENDARY SECRET",
-                    Tier = math.random(5, 7),
-                    SellPrice = math.random(25000, 150000),
-                    Rarity = i % 2 == 0 and "LEGENDARY" or "MYTHIC",
-                    Weight = math.random(5, 25) + math.random()
-                }
-                FishCaught:FireServer(rareFish)
-            end
-        end)
-        wait(0.1) -- SUPER FAST SPAWN
-    end
-end
-
--- ULTRA SECRET FISHING SYSTEM
-local function UltraSecretFishing()
-    while Config.UltraSecretMode do
-        pcall(function()
-            -- STEP 1: AUTO EQUIP ROD
-            if EquipTool then
-                EquipTool:FireServer(1)
-            end
-            wait(0.05)
-            
-            -- STEP 2: INSTANT CHARGE
-            if ChargeRod then
-                ChargeRod:InvokeServer(tick())
-            end
-            wait(0.05)
-            
-            -- STEP 3: PERFECT MINIGAME BYPASS
-            if StartMini then
-                StartMini:InvokeServer(-1.233184814453125, 0.9945034885633273)
-            end
-            wait(0.05)
-            
-            -- STEP 4: INSTANT FINISH + SECRET CATCH
-            if FinishFish then
-                FinishFish:FireServer()
-            end
-            wait(0.05)
-            
-            -- STEP 5: FORCE SECRET CATCH
-            if FishCaught then
-                -- HIGH CHANCE FOR SECRET
-                if math.random(1, 100) <= 80 then -- 80% chance secret
-                    local secretCatch = {
-                        Name = "🔥 ULTRA SECRET",
-                        Tier = 7,
-                        SellPrice = math.random(75000, 300000),
-                        Rarity = "SECRET",
-                        Weight = math.random(15, 60) + math.random()
-                    }
-                    FishCaught:FireServer(secretCatch)
-                    TotalSecretsCaught += 1
-                    SecretFound = true
-                    
-                    -- NOTIFICATION
-                    Rayfield:Notify({
-                        Title = "🔥 SECRET CAUGHT!",
-                        Content = "Total Secrets: " .. TotalSecretsCaught,
-                        Duration = 3
-                    })
-                else
-                    -- STILL GIVE LEGENDARY/MYTHIC
-                    local rareCatch = {
-                        Name = "⭐ BACKUP RARE",
-                        Tier = math.random(5, 6),
-                        SellPrice = math.random(50000, 150000),
-                        Rarity = math.random(1,2) == 1 and "LEGENDARY" or "MYTHIC",
-                        Weight = math.random(10, 30) + math.random()
-                    }
-                    FishCaught:FireServer(rareCatch)
-                end
-            end
-            
-            -- EXTRA: MASS CATCH FOR MAXIMUM SECRETS
-            if Config.UltraSecretMode and math.random(1, 10) <= 3 then
-                for i = 1, 3 do
-                    local extraSecret = {
-                        Name = "💎 EXTRA SECRET " .. i,
-                        Tier = 7,
-                        SellPrice = math.random(100000, 400000),
-                        Rarity = "SECRET",
-                        Weight = math.random(25, 80) + math.random()
-                    }
-                    FishCaught:FireServer(extraSecret)
-                    TotalSecretsCaught += 1
-                end
-            end
-            
-        end)
-        wait(0.1) -- ULTRA FAST CYCLE
-    end
-end
-
--- SECRET LOCATION TELEPORT SYSTEM
-local SecretLocations = {
-    ["Sisyphus Statue"] = CFrame.new(-3658.5747, -138.4813, -951.7969),
-    ["Sacred Temple"] = CFrame.new(1451.4100, -22.1250, -635.6500),
-    ["Ancient Jungle"] = CFrame.new(1479.6647, 11.1430, -297.9549),
-    ["Enchant Room"] = CFrame.new(3255, -1302, 1371),
-    ["Treasure Room"] = CFrame.new(-3599, -276, -1642),
-    ["Volcano"] = CFrame.new(-631, 54, 194),
-    ["Lost Isle"] = CFrame.new(-3717, 5, -1079)
-}
-
-local function TeleportToSecretSpot()
-    while Config.SecretTeleport do
-        for locationName, cf in pairs(SecretLocations) do
-            if Config.SecretTeleport then
-                -- Teleport to secret location
-                HumanoidRootPart.CFrame = cf
-                
-                -- Fish at this location for 30 seconds
-                local startTime = tick()
-                while Config.SecretTeleport and (tick() - startTime) < 30 do
-                    -- Quick fishing at this spot
-                    pcall(function()
-                        EquipTool:FireServer(1)
-                        wait(0.1)
-                        ChargeRod:InvokeServer(tick())
-                        wait(0.1)
-                        StartMini:InvokeServer(-1.233184814453125, 0.9945034885633273)
-                        wait(0.1)
-                        FinishFish:FireServer()
-                        
-                        -- Force secret at secret locations
-                        if FishCaught then
-                            local locationSecret = {
-                                Name = "📍 " .. locationName .. " SECRET",
-                                Tier = 7,
-                                SellPrice = math.random(100000, 500000),
-                                Rarity = "SECRET",
-                                Weight = math.random(20, 100) + math.random()
-                            }
-                            FishCaught:FireServer(locationSecret)
-                            TotalSecretsCaught += 1
-                        end
-                    end)
-                    wait(0.2)
-                end
-                
-                -- Move to next location
-                if Config.SecretTeleport then
-                    Rayfield:Notify({
-                        Title = "🔁 MOVING LOCATION",
-                        Content = "Next: " .. locationName,
-                        Duration = 2
-                    })
-                end
-            end
+-- ULTRA INSTANT FISHING FUNCTION
+local function ExecuteInstantFishing()
+    local successCount = 0
+    
+    pcall(function()
+        -- STEP 1: AUTO EQUIP FISHING ROD
+        if EquipTool then
+            EquipTool:FireServer(1) -- Equip fishing rod slot 1
         end
-    end
-end
-
--- ANTI ANTI-CHEAT BYPASS
-local function AntiAntiCheatBypass()
-    if Config.AntiAntiCheat then
-        -- Method 1: Randomize timing
-        local originalWait = wait
-        wait = function(time)
-            if type(time) == "number" then
-                return originalWait(time + math.random(-0.1, 0.1))
+        task.wait(0.05)
+        
+        -- STEP 2: INSTANT CHARGE - NO DELAY
+        if ChargeRod then
+            ChargeRod:InvokeServer(tick()) -- Instant charge
+        end
+        task.wait(0.05)
+        
+        -- STEP 3: PERFECT MINIGAME - ALWAYS PERFECT SCORE
+        if StartMini then
+            -- Perfect coordinates for instant success
+            StartMini:InvokeServer(-1.233184814453125, 0.9945034885633273)
+        end
+        task.wait(0.05)
+        
+        -- STEP 4: INSTANT COMPLETE FISHING
+        if FinishFish then
+            FinishFish:FireServer() -- Complete fishing instantly
+        end
+        task.wait(0.05)
+        
+        -- STEP 5: FORCE FISH CAUGHT WITH HIGH RARITY
+        if FishCaught then
+            -- Always catch high-tier fish
+            local fishTier = math.random(5, 7) -- Legendary to Secret
+            local fishRarity = "LEGENDARY"
+            if fishTier == 6 then fishRarity = "MYTHIC"
+            elseif fishTier == 7 then fishRarity = "SECRET" end
+            
+            FishCaught:FireServer({
+                Name = "⚡ INSTANT FISH",
+                Tier = fishTier,
+                SellPrice = math.random(20000, 50000),
+                Rarity = fishRarity,
+                Weight = math.random(3, 8) + math.random()
+            })
+            successCount = 1
+            
+            -- SEND TELEGRAM NOTIFICATION IF ENABLED
+            if TelegramConfig.Enabled and ShouldSendByRarity(fishRarity) then
+                local fishInfo = {
+                    Name = "INSTANT FISH",
+                    Tier = fishTier,
+                    SellPrice = math.random(20000, 50000),
+                    Rarity = fishRarity,
+                    Weight = math.random(3, 8) + math.random()
+                }
+                local message = BuildTelegramMessage(fishInfo, math.random(1000, 9999), fishRarity, fishInfo.Weight)
+                spawn(function() SendTelegram(message) end)
             end
-            return originalWait(time)
         end
         
-        -- Method 2: Fake human-like behavior
-        spawn(function()
-            while Config.AntiAntiCheat do
-                -- Random small movements
-                if HumanoidRootPart then
-                    HumanoidRootPart.CFrame = HumanoidRootPart.CFrame * CFrame.new(
-                        math.random(-2, 2), 0, math.random(-2, 2)
-                    )
-                end
-                wait(math.random(5, 15))
-            end
-        end)
-        
-        -- Method 3: Random delays between actions
-        spawn(function()
-            while Config.AntiAntiCheat do
-                wait(math.random(30, 60))
-                -- Fake "human" pause
-                Config.UltraSecretMode = false
-                wait(math.random(2, 5))
-                Config.UltraSecretMode = true
-            end
-        end)
-    end
-end
-
--- AUTO SELL SECRETS
-local function AutoSellSecrets()
-    while true do
-        wait(30) -- Sell every 30 seconds
-        if TotalSecretsCaught > 0 then
-            pcall(function()
-                SellRemote:InvokeServer()
-                print("💰 Sold " .. TotalSecretsCaught .. " secrets!")
+        -- STEP 6: EXTRA CATCHES FOR MAXIMUM EFFICIENCY
+        if Config.MaxPerformance and FishCaught then
+            for i = 1, 2 do -- Extra 2 fish per cycle
+                local extraTier = math.random(6, 7) -- Mythic or Secret
+                local extraRarity = extraTier == 6 and "MYTHIC" or "SECRET"
                 
-                Rayfield:Notify({
-                    Title = "💰 SECRETS SOLD!",
-                    Content = "Total: " .. TotalSecretsCaught .. " secrets",
-                    Duration = 3
+                FishCaught:FireServer({
+                    Name = "🚀 ULTRA FISH",
+                    Tier = extraTier,
+                    SellPrice = math.random(25000, 60000),
+                    Rarity = extraRarity,
+                    Weight = math.random(4, 10) + math.random()
                 })
-            end)
-        end
-    end
-end
-
--- STATS MONITOR
-local function StatsMonitor()
-    while true do
-        wait(5)
-        if Config.UltraSecretMode then
-            local sessionTime = tick() - SecretSessionStart
-            local secretsPerMinute = (TotalSecretsCaught / math.max(sessionTime, 1)) * 60
-            
-            Window:SetWindowName("🔥 SECRET HUNTER | " .. TotalSecretsCaught .. " Secrets | " .. math.floor(secretsPerMinute) .. "/min")
-        end
-    end
-end
-
--- UI CREATION
-local function CreateUltraSecretUI()
-    local Tab = Window:CreateTab("🔥 ULTRA SECRET", 4483362458)
-    
-    Tab:CreateSection("ULTRA SECRET MODE")
-    
-    Tab:CreateToggle({
-        Name = "🔥 ULTRA SECRET MODE (MAIN)",
-        CurrentValue = Config.UltraSecretMode,
-        Callback = function(Value)
-            Config.UltraSecretMode = Value
-            if Value then
-                SecretSessionStart = tick()
-                UltraSecretFishing()
-                Rayfield:Notify({
-                    Title = "🔥 ULTRA SECRET ACTIVATED",
-                    Content = "Secret hunting started!",
-                    Duration = 5
-                })
-            else
-                Rayfield:Notify({
-                    Title = "SECRET MODE STOPPED",
-                    Content = "Total Secrets: " .. TotalSecretsCaught,
-                    Duration = 3
-                })
+                successCount = successCount + 1
+                
+                -- SEND TELEGRAM FOR EXTRA CATCHES
+                if TelegramConfig.Enabled and ShouldSendByRarity(extraRarity) then
+                    local fishInfo = {
+                        Name = "ULTRA FISH",
+                        Tier = extraTier,
+                        SellPrice = math.random(25000, 60000),
+                        Rarity = extraRarity,
+                        Weight = math.random(4, 10) + math.random()
+                    }
+                    local message = BuildTelegramMessage(fishInfo, math.random(1000, 9999), extraRarity, fishInfo.Weight)
+                    spawn(function() SendTelegram(message) end)
+                end
             end
-        end
-    })
-    
-    Tab:CreateToggle({
-        Name = "💥 FORCE SECRET SPAWN (BARBAR)",
-        CurrentValue = Config.ForceSecretSpawn,
-        Callback = function(Value)
-            Config.ForceSecretSpawn = Value
-            if Value then
-                ForceSecretSpawn()
-                Rayfield:Notify({
-                    Title = "💥 FORCE SPAWN ACTIVATED",
-                    Content = "Spamming secrets!",
-                    Duration = 3
-                })
-            end
-        end
-    })
-    
-    Tab:CreateToggle({
-        Name = "📍 SECRET LOCATION TELEPORT",
-        CurrentValue = Config.SecretTeleport,
-        Callback = function(Value)
-            Config.SecretTeleport = Value
-            if Value then
-                TeleportToSecretSpot()
-                Rayfield:Notify({
-                    Title = "📍 LOCATION HOPPING",
-                    Content = "Teleporting to secret spots!",
-                    Duration = 3
-                })
-            end
-        end
-    })
-    
-    Tab:CreateToggle({
-        Name = "🛡️ ANTI ANTI-CHEAT BYPASS",
-        CurrentValue = Config.AntiAntiCheat,
-        Callback = function(Value)
-            Config.AntiAntiCheat = Value
-            if Value then
-                AntiAntiCheatBypass()
-                Rayfield:Notify({
-                    Title = "🛡️ ANTI-CHEAT BYPASS",
-                    Content = "Stealth mode activated!",
-                    Duration = 3
-                })
-            end
-        end
-    })
-    
-    Tab:CreateSection("STATISTICS")
-    
-    local StatsLabel = Tab:CreateLabel("Secrets: 0 | Rate: 0/min")
-    
-    spawn(function()
-        while true do
-            wait(1)
-            local sessionTime = tick() - SecretSessionStart
-            local rate = (TotalSecretsCaught / math.max(sessionTime, 1)) * 60
-            
-            StatsLabel:Set("Secrets: " .. TotalSecretsCaught .. " | Rate: " .. math.floor(rate) .. "/min")
         end
     end)
     
-    Tab:CreateButton({
-        Name = "📊 SHOW SECRET STATS",
-        Callback = function()
-            local sessionTime = tick() - SecretSessionStart
-            local rate = (TotalSecretsCaught / math.max(sessionTime, 1)) * 60
-            
-            Rayfield:Notify({
-                Title = "🔥 SECRET STATS",
-                Content = "Total: " .. TotalSecretsCaught .. "\nRate: " .. math.floor(rate) .. "/min\nTime: " .. math.floor(sessionTime) .. "s",
-                Duration = 6
-            })
-        end
-    })
+    return successCount
+end
+
+-- MAIN INSTANT FISHING LOOP
+local function StartInstantFishing()
+    if InstantFishingActive then return end
     
-    Tab:CreateButton({
-        Name = "💸 SELL ALL SECRETS NOW",
-        Callback = function()
+    print("🚀 ACTIVATING INSTANT FISHING - 100% SUCCESS RATE!")
+    
+    InstantFishingActive = true
+    InstantFishingStats.TotalCatches = 0
+    InstantFishingStats.StartTime = tick()
+    InstantFishingStats.LastCatchTime = tick()
+    
+    -- MAIN FISHING LOOP
+    task.spawn(function()
+        while InstantFishingActive do
+            local cycleStart = tick()
+            
+            -- EXECUTE INSTANT FISHING CYCLE
+            local catchesThisCycle = ExecuteInstantFishing()
+            InstantFishingStats.TotalCatches = InstantFishingStats.TotalCatches + catchesThisCycle
+            InstantFishingStats.LastCatchTime = tick()
+            
+            -- ULTRA FAST CYCLE TIMING
+            local cycleTime = tick() - cycleStart
+            local waitTime = math.max(Config.CycleSpeed - cycleTime, 0.01)
+            
+            task.wait(waitTime)
+        end
+    end)
+    
+    -- REAL-TIME STATS MONITOR
+    task.spawn(function()
+        while InstantFishingActive do
+            local elapsed = tick() - InstantFishingStats.StartTime
+            local currentRate = math.floor(InstantFishingStats.TotalCatches / math.max(elapsed, 1))
+            local totalTime = tick() - InstantFishingStats.StartTime
+            
+            -- UPDATE WINDOW TITLE WITH LIVE STATS
             pcall(function()
-                SellRemote:InvokeServer()
-                Rayfield:Notify({
-                    Title = "💰 SOLD!",
-                    Content = "Total Secrets Sold: " .. TotalSecretsCaught,
-                    Duration = 3
-                })
-                TotalSecretsCaught = 0
+                Window:SetWindowName(string.format("WAKWIK INSTANT | %d FISH/SEC | TOTAL: %d", currentRate, InstantFishingStats.TotalCatches))
             end)
-        end
-    })
-    
-    Tab:CreateSection("QUICK ACTIONS")
-    
-    Tab:CreateButton({
-        Name = "🚀 ACTIVATE ALL SECRET MODES",
-        Callback = function()
-            Config.UltraSecretMode = true
-            Config.ForceSecretSpawn = true
-            Config.SecretTeleport = true
-            Config.AntiAntiCheat = true
             
-            SecretSessionStart = tick()
-            UltraSecretFishing()
-            ForceSecretSpawn()
-            TeleportToSecretSpot()
-            AntiAntiCheatBypass()
+            -- AUTO SELL IF ENABLED
+            if Config.AutoSell and InstantFishingStats.TotalCatches % 50 == 0 then
+                pcall(function() SellRemote:InvokeServer() end)
+            end
             
-            Rayfield:Notify({
-                Title = "🚀 ALL SYSTEMS GO!",
-                Content = "Ultra Secret Hunting Activated!",
-                Duration = 5
-            })
+            task.wait(0.5)
         end
-    })
+    end)
     
-    Tab:CreateButton({
-        Name = "🛑 STOP ALL SECRET MODES",
-        Callback = function()
-            Config.UltraSecretMode = false
-            Config.ForceSecretSpawn = false
-            Config.SecretTeleport = false
-            Config.AntiAntiCheat = false
-            
-            Rayfield:Notify({
-                Title = "🛑 ALL SYSTEMS STOPPED",
-                Content = "Final Count: " .. TotalSecretsCaught .. " secrets",
-                Duration = 5
-            })
-        end
+    Rayfield:Notify({
+        Title = "🚀 INSTANT FISHING ACTIVATED",
+        Content = "100% Success Rate! Speed: " .. Config.CycleSpeed .. "s",
+        Duration = 5
     })
 end
 
--- START SYSTEMS
-spawn(AutoSellSecrets)
-spawn(StatsMonitor)
+local function StopInstantFishing()
+    if not InstantFishingActive then return end
+    
+    InstantFishingActive = false
+    
+    local totalTime = tick() - InstantFishingStats.StartTime
+    local avgRate = math.floor(InstantFishingStats.TotalCatches / math.max(totalTime, 1))
+    
+    Rayfield:Notify({
+        Title = "🛑 INSTANT FISHING STOPPED",
+        Content = string.format("Total: %d fish | Avg: %d/sec | Time: %.1fs", 
+            InstantFishingStats.TotalCatches, avgRate, totalTime),
+        Duration = 5
+    })
+    
+    pcall(function()
+        Window:SetWindowName("WAKWIK FISH IT - INSTANT FISHING")
+    end)
+end
 
--- INITIALIZE UI
-CreateUltraSecretUI()
+-- ================= ENHANCED PERFECT CATCH =================
 
--- STARTUP MESSAGE
-Rayfield:Notify({
-    Title = "🔥 ULTRA SECRET HUNTER LOADED",
-    Content = "Ready for barbar secret hunting!",
-    Duration = 5
+local function EnablePerfectCatchPlus()
+    -- OVERRIDE MINIGAME FOR PERFECT CATCH
+    local mt = getrawmetatable(game)
+    if not mt then return end
+    
+    setreadonly(mt, false)
+    local oldNamecall = mt.__namecall
+    
+    mt.__namecall = newcclosure(function(self, ...)
+        local method = getnamecallmethod()
+        local args = {...}
+        
+        -- ALWAYS RETURN PERFECT SCORE FOR FISHING MINIGAME
+        if method == "InvokeServer" and self == StartMini then
+            return oldNamecall(self, -1.233184814453125, 0.9945034885633273)
+        end
+        
+        return oldNamecall(self, ...)
+    end)
+    
+    setreadonly(mt, true)
+    
+    print("[PERFECT CATCH+] Always perfect minigame enabled!")
+end
+
+-- ================= UI FOR INSTANT FISHING =================
+
+-- Tambahkan ini di bagian CreateUI() setelah Tab1:CreateSection("EXTRA SPEED")
+
+-- INSTANT FISHING SECTION
+Tab1:CreateSection("INSTANT FISHING 🚀")
+
+Tab1:CreateToggle({
+    Name = "ACTIVATE INSTANT FISHING",
+    CurrentValue = false,
+    Callback = function(Value)
+        if Value then
+            -- Stop other fishing modes
+            Config.AutoFishingV1 = false
+            Config.AutoFishingV2 = false
+            Config.AutoFishingStable = false
+            Config.UltraInstantBite = false
+            
+            StartInstantFishing()
+        else
+            StopInstantFishing()
+        end
+    end
 })
 
-print("🔥 ULTRA SECRET HUNTER - BARBAR MODE ACTIVATED!")
-print("🚀 Features: Force Secret Spawn, Location Hop, Anti Anti-Cheat")
-print("💎 Ready to farm unlimited secrets!")
+Tab1:CreateSlider({
+    Name = "Instant Fishing Speed",
+    Range = {0.01, 0.5},
+    Increment = 0.01,
+    CurrentValue = 0.05,
+    Suffix = "s",
+    Callback = function(Value)
+        Config.CycleSpeed = Value
+    end
+})
+
+Tab1:CreateToggle({
+    Name = "Always Perfect Catch++",
+    CurrentValue = false,
+    Callback = function(Value)
+        if Value then
+            EnablePerfectCatchPlus()
+            Rayfield:Notify({
+                Title = "Perfect Catch++",
+                Content = "Always perfect minigame enabled!",
+                Duration = 3
+            })
+        end
+    end
+})
+
+Tab1:CreateButton({
+    Name = "TEST INSTANT CATCH (10x)",
+    Callback = function()
+        print("🧪 TESTING INSTANT CATCH 10x...")
+        local totalCaught = 0
+        for i = 1, 10 do
+            totalCaught = totalCaught + ExecuteInstantFishing()
+            task.wait(0.1)
+        end
+        Rayfield:Notify({
+            Title = "TEST COMPLETE",
+            Content = string.format("Caught %d fish instantly!", totalCaught),
+            Duration = 3
+        })
+    end
+})
+
+-- ================= AUTO-SETUP INSTANT FISHING =================
+
+-- Otomatis setup instant fishing ketika script mulai
+task.spawn(function()
+    task.wait(3)
+    
+    -- Enable perfect catch secara otomatis
+    EnablePerfectCatchPlus()
+    
+    -- Set cycle speed ke paling cepat
+    Config.CycleSpeed = 0.05
+    
+    print("⚡ INSTANT FISHING SYSTEM READY!")
+    print("✅ Perfect Catch++ Enabled")
+    print("✅ Ultra Fast Cycle: 0.05s")
+    print("✅ 100% Success Rate Guaranteed")
+    print("✅ High Tier Fish Always")
+end)
+
+-- ================= CHARACTER RESPAWN HANDLER =================
+
+-- Pastikan instant fishing tetap berjalan setelah respawn
+LocalPlayer.CharacterAdded:Connect(function(char)
+    Character = char
+    HumanoidRootPart = char:WaitForChild("HumanoidRootPart")
+    Humanoid = char:WaitForChild("Humanoid")
+    
+    task.wait(2)
+    
+    if InstantFishingActive then
+        print("♻️ Restarting Instant Fishing after respawn...")
+        task.wait(1)
+        StartInstantFishing()
+    end
+end)
